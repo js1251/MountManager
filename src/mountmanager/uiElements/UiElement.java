@@ -12,6 +12,9 @@ public abstract class UiElement {
 
 	public UiElement(JFrame frame) {
 		this.frame = frame;
+		initialize();
+		setupComponents();
+		setupListeners();
 	}
 
 	/**

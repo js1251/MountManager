@@ -26,7 +26,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -39,20 +38,16 @@ import javax.swing.table.TableModel;
 import mountmanager.mountcfg.MountConfig;
 import mountmanager.mountcfg.MountEntry;
 import mountmanager.uiElements.MountManagerDescription;
-import mountmanager.util.WebsiteOpener;
-
-import java.awt.Color;
 
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import java.awt.Component;
-import java.awt.Cursor;
 
 import javax.swing.JFileChooser;
 
 public class Ui {
 	private JFrame frame;
-	private JPanel descriptionPanel, middlePanel, applyPanel;
+	private JPanel middlePanel, applyPanel;
 	private String mountLastOpened = "";
 	private String cfgLastOpened = "";
 	private MountConfig mountConfig = new MountConfig();
@@ -78,7 +73,7 @@ public class Ui {
 		initialize();
 		setupPanels();
 
-		setupTop();
+		//setupTop();
 		setupMiddle();
 		setupBottom();
 
@@ -171,14 +166,6 @@ public class Ui {
 	}
 
 	private void setupPanels() {
-		descriptionPanel = new JPanel();
-		descriptionPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		descriptionPanel.setPreferredSize(new Dimension(0, 100));
-		descriptionPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
-		descriptionPanel.setMinimumSize(new Dimension(0, 100));
-		descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.X_AXIS));
-		frame.getContentPane().add(descriptionPanel);
-
 		middlePanel = new JPanel();
 		middlePanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
@@ -191,45 +178,6 @@ public class Ui {
 		applyPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 		applyPanel.setLayout(new BoxLayout(applyPanel, BoxLayout.X_AXIS));
 		frame.getContentPane().add(applyPanel);
-	}
-
-	private void setupTop() {
-		String text = "<html>" + "<b>1.</b> Select \"GarrysMod\\garrysmod\\cfg\\mount.cfg\"<BR>"
-				+ "<b>2.</b> Add a project and give it a name<BR>"
-				+ "<b>3.</b> Add any folders from where you want to mount content" + "</html>";
-
-		JLabel description = new JLabel(text);
-		description.setHorizontalAlignment(SwingConstants.CENTER);
-		description.setBounds(10, 11, 364, 78);
-		descriptionPanel.add(description);
-
-		JPanel panel = new JPanel();
-		descriptionPanel.add(panel);
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-		JLabel creditsLabel1 = new JLabel("<html><b>Created by</b></html>");
-		creditsLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(creditsLabel1);
-
-		JLabel creditsLabel2 = new JLabel("<html>Jakob Sailer aka KingPommes</b></html>");
-		creditsLabel2.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(creditsLabel2);
-
-		JLabel websiteLabel = new JLabel("<HTML><U>www.jakobsailer.com</U></HTML>");
-		websiteLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		websiteLabel.setForeground(Color.BLUE);
-		websiteLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		panel.add(websiteLabel);
-
-		websiteLabel.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent event) {
-				try {
-					WebsiteOpener.openWebpage("https://www.jakobsailer.com/");
-				} catch (Exception exception) {
-					// TODO: error popup
-				}
-			}
-		});
 	}
 
 	private void setupMiddle() {

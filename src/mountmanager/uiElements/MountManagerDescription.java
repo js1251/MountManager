@@ -31,7 +31,7 @@ public class MountManagerDescription extends UiElement {
 	}
 
 	protected void initialize() {
-		JPanel mainPanel = new JPanel();
+		mainPanel = new JPanel();
 		mainPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		mainPanel.setPreferredSize(new Dimension(0, 100));
 		mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
@@ -41,6 +41,7 @@ public class MountManagerDescription extends UiElement {
 	}
 
 	protected void setupComponents() {
+		// quick tutorial of sorts
 		String text = "<html>" + "<b>1.</b> Select \"GarrysMod\\garrysmod\\cfg\\mount.cfg\"<BR>"
 				+ "<b>2.</b> Add a project and give it a name<BR>"
 				+ "<b>3.</b> Add any folders from where you want to mount content" + "</html>";
@@ -50,26 +51,31 @@ public class MountManagerDescription extends UiElement {
 		description.setBounds(10, 11, 364, 78);
 		mainPanel.add(description);
 
-		JPanel panel = new JPanel();
-		mainPanel.add(panel);
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		// panel with y boxlayout for credits
+		JPanel creditsPanel = new JPanel();
+		mainPanel.add(creditsPanel);
+		creditsPanel.setLayout(new BoxLayout(creditsPanel, BoxLayout.Y_AXIS));
 
+		// created by text
 		JLabel creditsLabel1 = new JLabel("<html><b>Created by</b></html>");
 		creditsLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(creditsLabel1);
+		creditsPanel.add(creditsLabel1);
 
+		// name text
 		JLabel creditsLabel2 = new JLabel("<html>Jakob Sailer aka KingPommes</b></html>");
 		creditsLabel2.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(creditsLabel2);
+		creditsPanel.add(creditsLabel2);
 
+		// website text
 		websiteLabel = new JLabel("<HTML><U>www.jakobsailer.com</U></HTML>");
 		websiteLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		websiteLabel.setForeground(Color.BLUE);
 		websiteLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		panel.add(websiteLabel);
+		creditsPanel.add(websiteLabel);
 	}
 
 	protected void setupListeners() {
+		// add a "button" to open my website
 		websiteLabel.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent event) {
 				try {
