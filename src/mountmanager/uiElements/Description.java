@@ -7,12 +7,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
+import mountmanager.Ui;
 import mountmanager.util.WebsiteOpener;
 
 /**
@@ -22,14 +22,14 @@ import mountmanager.util.WebsiteOpener;
  * @author Jakob Sailer
  *
  */
-public class MountManagerDescription extends UiElement {
-	private JPanel mainPanel;
+public class Description extends UiElement {
 	private JLabel websiteLabel;
 
-	public MountManagerDescription(JFrame frame) {
-		super(frame);
+	public Description(Ui ui) {
+		super(ui);
 	}
 
+	@Override
 	protected void initialize() {
 		mainPanel = new JPanel();
 		mainPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -37,9 +37,9 @@ public class MountManagerDescription extends UiElement {
 		mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 		mainPanel.setMinimumSize(new Dimension(0, 100));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-		frame.getContentPane().add(mainPanel);
 	}
 
+	@Override
 	protected void setupComponents() {
 		// quick tutorial of sorts
 		String text = "<html>" + "<b>1.</b> Select \"GarrysMod\\garrysmod\\cfg\\mount.cfg\"<BR>"
@@ -74,6 +74,7 @@ public class MountManagerDescription extends UiElement {
 		creditsPanel.add(websiteLabel);
 	}
 
+	@Override
 	protected void setupListeners() {
 		// add a "button" to open my website
 		websiteLabel.addMouseListener(new MouseAdapter() {

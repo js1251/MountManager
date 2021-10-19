@@ -1,6 +1,8 @@
 package mountmanager.uiElements;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import mountmanager.Ui;
 
 /**
  * Abstract class for any UI element in the MountManager
@@ -8,22 +10,18 @@ import javax.swing.JFrame;
  * @author Jakob Sailer
  */
 public abstract class UiElement {
-	protected JFrame frame;
-
-	public UiElement(JFrame frame) {
-		this.frame = frame;
+	protected JPanel mainPanel;
+	protected Ui ui;
+	
+	public UiElement(Ui ui) {
+		this.ui = ui;
 		initialize();
 		setupComponents();
 		setupListeners();
 	}
-
-	/**
-	 * Gets the parent frame this UI element is added to
-	 * 
-	 * @return the parent frame
-	 */
-	public JFrame getParentFrame() {
-		return this.frame;
+	
+	public JPanel create() {
+		return this.mainPanel;
 	}
 
 	/**
