@@ -1,4 +1,4 @@
-package mountmanager;
+package mountmanager.util;
 
 import java.awt.Desktop;
 import java.io.IOException;

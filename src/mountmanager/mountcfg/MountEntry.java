@@ -1,4 +1,4 @@
-package mountmanager;
+package mountmanager.mountcfg;
 
 import java.util.ArrayList;
 

@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
-import mountmanager.WebsiteOpener;
+import mountmanager.util.WebsiteOpener;
 
 /**
  * Description panel on the top of the tool. Contains a short description and
@@ -26,7 +26,7 @@ public class MountManagerDescription extends UiElement {
 	private JPanel mainPanel;
 	private JLabel websiteLabel;
 
-	MountManagerDescription(JFrame frame) {
+	public MountManagerDescription(JFrame frame) {
 		super(frame);
 	}
 

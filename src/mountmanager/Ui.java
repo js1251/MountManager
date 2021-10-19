@@ -1,4 +1,4 @@
-package mountmanager.uiElements;
+package mountmanager;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -36,9 +36,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import mountmanager.MountConfig;
-import mountmanager.MountEntry;
-import mountmanager.WebsiteOpener;
+import mountmanager.mountcfg.MountConfig;
+import mountmanager.mountcfg.MountEntry;
+import mountmanager.uiElements.MountManagerDescription;
+import mountmanager.util.WebsiteOpener;
 
 import java.awt.Color;
 
