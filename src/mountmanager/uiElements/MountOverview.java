@@ -76,6 +76,10 @@ public class MountOverview extends UiElement {
 	public void clear() {
 		this.listModel.clear();
 	}
+	
+	public void enableAddButton(boolean isEnabled) {
+		addButton.setEnabled(isEnabled);
+	}
 
 	@Override
 	protected void initialize() {

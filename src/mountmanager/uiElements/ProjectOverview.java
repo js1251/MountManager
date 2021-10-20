@@ -154,7 +154,7 @@ public class ProjectOverview extends UiElement {
 
 				removeButton.setEnabled(selectionExists);
 				copyButton.setEnabled(selectionExists);
-				addButton.setEnabled(selectionExists);
+				ui.getMountOverview().enableAddButton(selectionExists);
 
 				if (selectionExists) {
 					ui.getMountConfig().setActiveIndex(selectedIndex);
@@ -234,6 +234,10 @@ public class ProjectOverview extends UiElement {
 			public void actionPerformed(ActionEvent event) {
 				try {
 					MountEntry newEntry = makeNewEntry();
+					if (newEntry == null) {
+						return;
+					}
+
 					for (String folder : ui.getMountConfig().getActiveEntry().getFolders()) {
 						newEntry.addFolder(folder);
 					}
@@ -246,13 +250,18 @@ public class ProjectOverview extends UiElement {
 
 	/**
 	 * Creates a new project entry by asking the user for a name.
+	 * 
 	 * @return The new project entry.
 	 * @throws Exception - when the name is invalid or already in use
 	 */
 	private MountEntry makeNewEntry() throws Exception {
 		// ask user for a new project name
-		String projectName = JOptionPane.showInputDialog("Project name:");
-		projectName = projectName.replaceAll("[^a-zA-Z0-9]", "").trim();
+		String projectName = JOptionPane.showInputDialog(ui.getFrame(), "Project name:");
+		if (projectName == null) {
+			return null;
+		}
+
+		projectName = projectName.replaceAll("[^a-zA-Z0-9 -_.,]", "").trim();
 
 		// warn user if project name is empty
 		if (projectName.isEmpty()) {

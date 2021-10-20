@@ -13,6 +13,7 @@ import mountmanager.uiElements.Config;
 import mountmanager.uiElements.Description;
 import mountmanager.uiElements.MountOverview;
 import mountmanager.uiElements.ProjectOverview;
+import mountmanager.util.ErrorHandler;
 import mountmanager.util.Persistance;
 
 import javax.swing.JSplitPane;
@@ -32,10 +33,10 @@ public class Ui {
 		persistance = new Persistance(this);
 
 		initialize();
-		load();
-		
 		frame.pack();
 		frame.setVisible(true);
+
+		load();
 	}
 
 	public JFrame getFrame() {
@@ -49,7 +50,7 @@ public class Ui {
 	public Persistance getPersistance() {
 		return this.persistance;
 	}
-	
+
 	public MountOverview getMountOverview() {
 		return this.mountOverview;
 	}
@@ -57,15 +58,18 @@ public class Ui {
 	public void madeChanges(boolean madeChanges) {
 		config.enableApplyButton(madeChanges);
 	}
-	
+
 	public void load() {
-		String mountPath = persistance.getMountPath();		
+		String mountPath = persistance.getMountPath();
 		if (mountPath != null) {
 			mountConfig.fromFile(mountPath);
 
 			config.setMountPath(mountPath);
 			projectOverview.fillProjectList();
 			projectOverview.getAddButton().setEnabled(true);
+		} else {
+			ErrorHandler.infoPopup(frame, "Missing mount.cfg",
+					"Please select your mount.cfg at the bottom of the tool.");
 		}
 	}
 
