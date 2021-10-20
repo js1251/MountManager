@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 
 import mountmanager.Ui;
 import mountmanager.mountcfg.MountEntry;
+import mountmanager.util.ErrorHandler;
 
 public class MountOverview extends UiElement {
 	private JList<String> list;
@@ -137,8 +138,8 @@ public class MountOverview extends UiElement {
 					String folder = ui.getMountConfig().getActiveEntry().getFolder(index);
 					try {
 						Runtime.getRuntime().exec("explorer.exe /select," + folder);
-					} catch (IOException e) {
-						// TODO error
+					} catch (IOException exception) {
+						ErrorHandler.errorPopup(ui.getFrame(), "Unexpected error", exception.getMessage());
 					}
 				}
 			}
@@ -177,7 +178,7 @@ public class MountOverview extends UiElement {
 					// changes have been made!
 					ui.madeChanges(true);
 				} else {
-					// TODO: warning popup
+					ErrorHandler.warningPopup(ui.getFrame(), "Unexpected error", "Please only select directories.");
 				}
 			}
 		});

@@ -13,6 +13,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
 
 import mountmanager.Ui;
+import mountmanager.util.ErrorHandler;
 import mountmanager.util.WebsiteOpener;
 
 /**
@@ -82,7 +83,7 @@ public class Description extends UiElement {
 				try {
 					WebsiteOpener.openWebpage("https://www.jakobsailer.com/");
 				} catch (Exception exception) {
-					// TODO: error popup
+					ErrorHandler.errorPopup(ui.getFrame(), "Unexpected error", exception.getMessage());
 				}
 			}
 		});

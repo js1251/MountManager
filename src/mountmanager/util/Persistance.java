@@ -24,9 +24,8 @@ public class Persistance {
 				return new String(Files.readAllBytes(Paths.get(saveFilePath)));
 			}
 
-		} catch (Exception e) {
-			// TODO show error message
-			e.printStackTrace();
+		} catch (Exception exception) {
+			ErrorHandler.errorPopup(ui.getFrame(), "Unexpected error", exception.getMessage());
 			return null;
 		}
 		
@@ -40,8 +39,8 @@ public class Persistance {
 			writer.close();
 
 			ui.load(); // what ??
-		} catch (IOException e) {
-			// TODO: show error message
+		} catch (IOException exception) {
+			ErrorHandler.errorPopup(ui.getFrame(), "Unexpected error", exception.getMessage());
 		}
 	}
 }

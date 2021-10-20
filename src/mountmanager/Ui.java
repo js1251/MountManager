@@ -28,7 +28,7 @@ public class Ui {
 	private Config config;
 
 	public Ui() {
-		mountConfig = new MountConfig();
+		mountConfig = new MountConfig(this);
 		persistance = new Persistance(this);
 
 		initialize();

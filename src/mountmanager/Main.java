@@ -3,6 +3,8 @@ import java.awt.EventQueue;
 
 import javax.swing.UIManager;
 
+import mountmanager.util.ErrorHandler;
+
 public class Main {
 	public static void main(String[] args) {
 		try {
@@ -12,8 +14,8 @@ public class Main {
 					new Ui();
 				}
 			});
-		} catch (Throwable e) {
-			// TODO: error popup
+		} catch (Throwable exception) {
+			ErrorHandler.errorPopup(null, "Unexpected error", exception.getMessage());
 		}
 	}
 }

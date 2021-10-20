@@ -23,6 +23,7 @@ import javax.swing.table.TableModel;
 
 import mountmanager.Ui;
 import mountmanager.mountcfg.MountEntry;
+import mountmanager.util.ErrorHandler;
 
 public class ProjectOverview extends UiElement {
 	private JTable table;
@@ -189,35 +190,12 @@ public class ProjectOverview extends UiElement {
 
 		addButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				// ask user for a new project name
-				String projectName = JOptionPane.showInputDialog("Project name:");
-				projectName = projectName.replaceAll("[^a-zA-Z0-9]", "").trim();
-
-				// warn user if project name is empty
-				if (projectName.isEmpty()) {
-					JOptionPane.showMessageDialog(ui.getFrame(), "Project name cant be blank!", "Warning",
-							JOptionPane.WARNING_MESSAGE);
-					return;
+			public void actionPerformed(ActionEvent event) {
+				try {
+					makeNewEntry();
+				} catch (Exception exception) {
+					ErrorHandler.warningPopup(ui.getFrame(), "Invalid project name", exception.getMessage());
 				}
-
-				// add new MountEntry to mountconfig
-				MountEntry newEntry = new MountEntry(projectName);
-				boolean addedEntry = ui.getMountConfig().addEntry(newEntry);
-
-				// warning if project name already exists
-				if (!addedEntry) {
-					JOptionPane.showMessageDialog(ui.getFrame(), projectName + " already exists!", "Warning",
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-
-				// add new project to table and select it after
-				tableModel.addRow(new Object[] { true, projectName });
-				table.setRowSelectionInterval(0, table.getRowCount() - 1);
-
-				// changes have been made!
-				ui.madeChanges(true);
 			}
 		});
 
@@ -253,42 +231,50 @@ public class ProjectOverview extends UiElement {
 
 		copyButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				// ask user for a new project name
-				String projectName = JOptionPane.showInputDialog("Project name:");
-				projectName = projectName.replaceAll("[^a-zA-Z0-9]", "").trim();
-
-				// warn user if project name is empty
-				if (projectName.isEmpty()) {
-					JOptionPane.showMessageDialog(ui.getFrame(), "Project name cant be blank!", "Warning",
-							JOptionPane.WARNING_MESSAGE);
-					return;
+			public void actionPerformed(ActionEvent event) {
+				try {
+					MountEntry newEntry = makeNewEntry();
+					for (String folder : ui.getMountConfig().getActiveEntry().getFolders()) {
+						newEntry.addFolder(folder);
+					}
+				} catch (Exception exception) {
+					ErrorHandler.warningPopup(ui.getFrame(), "Invalid project name", exception.getMessage());
 				}
-
-				// add new MountEntry to mountconfig
-				MountEntry newEntry = new MountEntry(projectName);
-
-				// copy setup of selected Project
-				for (String folder : ui.getMountConfig().getActiveEntry().getFolders()) {
-					newEntry.addFolder(folder);
-				}
-
-				boolean addedEntry = ui.getMountConfig().addEntry(newEntry);
-
-				// warning if project name already exists
-				if (!addedEntry) {
-					JOptionPane.showMessageDialog(ui.getFrame(), projectName + " already exists!", "Warning",
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-
-				// add new project to table and select it after
-				tableModel.addRow(new Object[] { true, projectName });
-				table.setRowSelectionInterval(0, table.getRowCount() - 1);
-
-				// changes have been made!
-				ui.madeChanges(true);
 			}
 		});
+	}
+
+	/**
+	 * Creates a new project entry by asking the user for a name.
+	 * @return The new project entry.
+	 * @throws Exception - when the name is invalid or already in use
+	 */
+	private MountEntry makeNewEntry() throws Exception {
+		// ask user for a new project name
+		String projectName = JOptionPane.showInputDialog("Project name:");
+		projectName = projectName.replaceAll("[^a-zA-Z0-9]", "").trim();
+
+		// warn user if project name is empty
+		if (projectName.isEmpty()) {
+			throw new Exception("Project name cant be blank!");
+		}
+
+		// add new MountEntry to mountconfig
+		MountEntry newEntry = new MountEntry(projectName);
+		boolean addedEntry = ui.getMountConfig().addEntry(newEntry);
+
+		// warning if project name already exists
+		if (!addedEntry) {
+			throw new Exception(projectName + " already exists!");
+		}
+
+		// add new project to table and select it after
+		tableModel.addRow(new Object[] { true, projectName });
+		table.setRowSelectionInterval(0, table.getRowCount() - 1);
+
+		// changes have been made!
+		ui.madeChanges(true);
+
+		return newEntry;
 	}
 }

@@ -10,13 +10,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import mountmanager.Ui;
+import mountmanager.util.ErrorHandler;
 
 public class Config extends UiElement {
 	private JButton browseButton, applyButton;
@@ -88,25 +88,22 @@ public class Config extends UiElement {
 					lastOpened = mountPath;
 
 					if (!mountPath.endsWith("\\cfg\\mount.cfg")) {
-						JOptionPane.showMessageDialog(ui.getFrame(), "Please select a valid mount.cfg!", "Warning",
-								JOptionPane.WARNING_MESSAGE);
+						ErrorHandler.errorPopup(ui.getFrame(), "Invalid file", "Please select a valid mount.cfg!");
 						return;
 					}
 
 					ui.getPersistance().createSaveFile(mountPath);
-				} else {
-					// TODO: warning popup ?
 				}
 			}
 		});
 
 		applyButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent event) {
 				try {
 					ui.getMountConfig().writeToFile();
-				} catch (Exception e1) {
-					// TODO error
+				} catch (Exception exception) {
+					ErrorHandler.errorPopup(ui.getFrame(), "Unexpected error", exception.getMessage());
 				}
 
 				// once changes are applied reset madeChanges and disable apply button
