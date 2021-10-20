@@ -28,6 +28,10 @@ public class MountEntry {
 		folders.add(folder);
 	}
 	
+	public void addFolderAt(String folder, int index) {
+		folders.set(index, folder);
+	}
+	
 	public String getFolder(int index) {
 		return folders.get(index);
 	}

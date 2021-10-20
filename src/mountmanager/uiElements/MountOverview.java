@@ -45,7 +45,26 @@ public class MountOverview extends UiElement {
 			return;
 		}
 
-		for (String folder : activeEntry.getFolders()) {
+		for (int i = 0; i < activeEntry.getFolders().size(); i++) {
+			String folder = activeEntry.getFolder(i);
+
+			// check if folder can be found
+			if (!new File(folder).exists()) {
+				String title = "Missing folder";
+				String message = "<html>" + folder + "<br>cannot be found anymore! Remove from configuration?</html>";
+				int result = JOptionPane.showConfirmDialog(ui.getFrame(), message, title, JOptionPane.YES_NO_OPTION);
+
+				if (result == JOptionPane.YES_OPTION) {
+					activeEntry.removeFolder(i);
+					ui.madeChanges(true);
+
+					// once the element was removed restart the process and return once finished as
+					// to not cause an endless loop
+					fillMountList();
+					return;
+				}
+			}
+
 			listModel.addElement(folder);
 		}
 	}
@@ -53,7 +72,7 @@ public class MountOverview extends UiElement {
 	public void setTitle(String title) {
 		mainPanel.setBorder(new TitledBorder(null, title, TitledBorder.LEADING, TitledBorder.TOP, null, null));
 	}
-	
+
 	public void clear() {
 		this.listModel.clear();
 	}
@@ -123,9 +142,11 @@ public class MountOverview extends UiElement {
 				// get the current selected entry
 				boolean selectionExists = list.getSelectedIndex() != -1;
 				removeButton.setEnabled(selectionExists);
+				editButton.setEnabled(selectionExists);
 			}
 		});
 
+		// open windows file browser at selected location
 		list.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() == 2) {
@@ -149,24 +170,16 @@ public class MountOverview extends UiElement {
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// open a file browser and ask for a dictionary
-				JFileChooser mountChooser = new JFileChooser();
-				mountChooser.setCurrentDirectory(new File(lastOpened));
-				mountChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-				mountChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				try {
+					String openedPath = showFileBrowser(lastOpened);
 
-				// if the result matches the requirements go along
-				int result = mountChooser.showOpenDialog(ui.getFrame());
-				if (result == JFileChooser.APPROVE_OPTION) {
-					// get the folderpath
-					String openedPath = mountChooser.getSelectedFile().getAbsolutePath();
 					lastOpened = openedPath;
 
 					// check if already inserted
 					for (String folderName : ui.getMountConfig().getActiveEntry().getFolders()) {
 						if (folderName.equals(openedPath)) {
 							JOptionPane.showMessageDialog(ui.getFrame(), "\"" + openedPath + "\" is already added!",
-									"Warning", JOptionPane.WARNING_MESSAGE);
+									"Folder selection warning", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
 					}
@@ -177,8 +190,9 @@ public class MountOverview extends UiElement {
 
 					// changes have been made!
 					ui.madeChanges(true);
-				} else {
-					ErrorHandler.warningPopup(ui.getFrame(), "Unexpected error", "Please only select directories.");
+				} catch (Exception exception) {
+					JOptionPane.showMessageDialog(ui.getFrame(), exception.getMessage(), "Folder selection warning",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -202,5 +216,46 @@ public class MountOverview extends UiElement {
 				ui.madeChanges(true);
 			}
 		});
+
+		// listen to edit button presses
+		editButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int index = list.getSelectedIndex();
+					String currentFolder = listModel.get(index);
+
+					// open a file browser at the location of the current folder to apply changes
+					String newFolder = showFileBrowser(currentFolder);
+
+					// replace the element in the list
+					ui.getMountConfig().getActiveEntry().addFolderAt(newFolder, index);
+					listModel.setElementAt(newFolder, index);
+
+					// finally mark that changes have been made
+					ui.madeChanges(true);
+				} catch (Exception exception) {
+					JOptionPane.showMessageDialog(ui.getFrame(), exception.getMessage(), "Folder selection warning",
+							JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+	}
+
+	private String showFileBrowser(String startingDictionary) throws Exception {
+		// open a file browser and ask for a dictionary
+		JFileChooser mountChooser = new JFileChooser();
+		mountChooser.setCurrentDirectory(new File(startingDictionary));
+		mountChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		mountChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		// if the result matches the requirements go along
+		int result = mountChooser.showOpenDialog(ui.getFrame());
+		if (result == JFileChooser.APPROVE_OPTION) {
+			// get the folderpath
+			return mountChooser.getSelectedFile().getAbsolutePath();
+		}
+
+		throw new Exception("Please only select directories.");
 	}
 }
