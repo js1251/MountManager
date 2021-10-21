@@ -7,6 +7,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -76,7 +78,7 @@ public class MountOverview extends UiElement {
 	public void clear() {
 		this.listModel.clear();
 	}
-	
+
 	public void enableAddButton(boolean isEnabled) {
 		addButton.setEnabled(isEnabled);
 	}
@@ -97,7 +99,7 @@ public class MountOverview extends UiElement {
 		// create a list that will hold all folder names
 		listModel = new DefaultListModel<String>();
 		list = new JList<String>(listModel);
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.setFixedCellHeight(30);
 
 		// make the list scrollable
@@ -122,7 +124,7 @@ public class MountOverview extends UiElement {
 		buttonPanel.add(addButton);
 
 		// padding between buttons
-		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		// a button to remove mount folders
 		removeButton = new JButton("Remove");
@@ -130,7 +132,7 @@ public class MountOverview extends UiElement {
 		buttonPanel.add(removeButton);
 
 		// padding between buttons
-		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		editButton = new JButton("Edit");
 		editButton.setEnabled(false);
@@ -174,29 +176,44 @@ public class MountOverview extends UiElement {
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					String openedPath = showFileBrowser(lastOpened);
+				// String openedPath = showFileBrowser(lastOpened);
+				// open a file browser and ask for a dictionary
+				JFileChooser mountChooser = new JFileChooser();
+				mountChooser.setCurrentDirectory(new File(lastOpened));
+				mountChooser.setMultiSelectionEnabled(true);
+				mountChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				mountChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-					lastOpened = openedPath;
+				// if the result matches the requirements go along
+				int result = mountChooser.showOpenDialog(ui.getFrame());
+				if (result == JFileChooser.CANCEL_OPTION) {
+					return;
+				}
 
-					// check if already inserted
-					for (String folderName : ui.getMountConfig().getActiveEntry().getFolders()) {
-						if (folderName.equals(openedPath)) {
-							JOptionPane.showMessageDialog(ui.getFrame(), "\"" + openedPath + "\" is already added!",
+				if (result == JFileChooser.APPROVE_OPTION) {
+					// get the folderpath
+					File[] openedFiles = mountChooser.getSelectedFiles();
+					lastOpened = openedFiles[0].getAbsolutePath(); // TODO: substring to parent folder
+					for (File file : openedFiles) {
+						String path = file.getAbsolutePath();
+
+						// folders should not be added multiple times
+						if (ui.getMountConfig().getActiveEntry().getFolders().contains(path)) {
+							JOptionPane.showMessageDialog(ui.getFrame(), "\"" + path + "\" is already added!",
 									"Folder selection warning", JOptionPane.WARNING_MESSAGE);
-							return;
+							continue;
 						}
+
+						// add opened folder to list and MountConfigentry
+						ui.getMountConfig().getActiveEntry().addFolder(path);
+						listModel.addElement(path);
+
+						// changes have been made!
+						ui.madeChanges(true);
 					}
-
-					// add opened folder to list and MountConfigentry
-					ui.getMountConfig().getActiveEntry().addFolder(openedPath);
-					listModel.addElement(openedPath);
-
-					// changes have been made!
-					ui.madeChanges(true);
-				} catch (Exception exception) {
-					JOptionPane.showMessageDialog(ui.getFrame(), exception.getMessage(), "Folder selection warning",
-							JOptionPane.WARNING_MESSAGE);
+				} else if (result != JFileChooser.CANCEL_OPTION) {
+					JOptionPane.showMessageDialog(ui.getFrame(), "Please only select directories.",
+							"Folder selection warning", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -205,19 +222,22 @@ public class MountOverview extends UiElement {
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// get selected entry in mountlist
-				// Note: remove button cannot be pressed when nothing is selected
-				int mountListIndex = list.getSelectedIndex();
-
-				// Note: negate confirm dialog since a miss-click isn't that bad and it would
-				// get annoying
-
-				// remove entry from mountConfig and list
-				ui.getMountConfig().getActiveEntry().removeFolder(mountListIndex);
-				listModel.remove(mountListIndex);
-
-				// changes have been made!
-				ui.madeChanges(true);
+				int confirm = JOptionPane.showConfirmDialog(ui.getFrame(),
+						"Are you sure you want to remove the selected folder(s)?", "Remove mount folders",
+						JOptionPane.YES_NO_OPTION);
+				if (confirm == JOptionPane.YES_OPTION) {
+					// get selected entry in mountlist
+					// Note: remove button cannot be pressed when nothing is selected
+					List<String> selected = list.getSelectedValuesList();
+					for (String folderName : selected) {
+						int index = listModel.lastIndexOf(folderName);
+						// remove entry from mountConfig and list
+						ui.getMountConfig().getActiveEntry().removeFolder(index);
+						listModel.remove(index);
+					}
+					// changes have been made!
+					ui.madeChanges(true);
+				}
 			}
 		});
 
@@ -225,12 +245,26 @@ public class MountOverview extends UiElement {
 		editButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					int index = list.getSelectedIndex();
-					String currentFolder = listModel.get(index);
+				int index = list.getSelectedIndex();
+				String currentFolder = listModel.get(index);
 
+				// open a file browser and ask for a dictionary
+				JFileChooser mountChooser = new JFileChooser();
+				mountChooser.setCurrentDirectory(new File(currentFolder));
+				mountChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				mountChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+				// if the result matches the requirements go along
+				int result = mountChooser.showOpenDialog(ui.getFrame());
+
+				if (result == JFileChooser.APPROVE_OPTION) {
 					// open a file browser at the location of the current folder to apply changes
-					String newFolder = showFileBrowser(currentFolder);
+					String newFolder = mountChooser.getSelectedFile().getAbsolutePath();
+
+					// in case the file browser was canceled
+					if (newFolder == null) {
+						return;
+					}
 
 					// replace the element in the list
 					ui.getMountConfig().getActiveEntry().addFolderAt(newFolder, index);
@@ -238,28 +272,11 @@ public class MountOverview extends UiElement {
 
 					// finally mark that changes have been made
 					ui.madeChanges(true);
-				} catch (Exception exception) {
-					JOptionPane.showMessageDialog(ui.getFrame(), exception.getMessage(), "Folder selection warning",
-							JOptionPane.WARNING_MESSAGE);
+				} else if (result != JFileChooser.CANCEL_OPTION) {
+					JOptionPane.showMessageDialog(ui.getFrame(), "Please only select directories.",
+							"Folder selection warning", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
-	}
-
-	private String showFileBrowser(String startingDictionary) throws Exception {
-		// open a file browser and ask for a dictionary
-		JFileChooser mountChooser = new JFileChooser();
-		mountChooser.setCurrentDirectory(new File(startingDictionary));
-		mountChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-		mountChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-		// if the result matches the requirements go along
-		int result = mountChooser.showOpenDialog(ui.getFrame());
-		if (result == JFileChooser.APPROVE_OPTION) {
-			// get the folderpath
-			return mountChooser.getSelectedFile().getAbsolutePath();
-		}
-
-		throw new Exception("Please only select directories.");
 	}
 }

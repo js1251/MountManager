@@ -75,7 +75,7 @@ public class Ui {
 
 	private void initialize() {
 		Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension minSize = new Dimension(700, 600);
+		Dimension minSize = new Dimension(800, 700);
 
 		// basics
 		frame = new JFrame();
@@ -86,7 +86,7 @@ public class Ui {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-		frame.setTitle("Garry's Mod MountManager v2021.10.19");
+		frame.setTitle("Garry's Mod MountManager v2021.10.21");
 
 		// top description
 		frame.getContentPane().add(new Description(this).create());

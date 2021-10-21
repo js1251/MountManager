@@ -46,29 +46,31 @@ public class Config extends UiElement {
 
 	@Override
 	protected void setupComponents() {
-		mainPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		mainPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		JLabel browseLabel = new JLabel("mount.cfg path:");
-		browseLabel.setPreferredSize(new Dimension(100, 0));
+		browseLabel.setPreferredSize(new Dimension(85, 0));
 		mainPanel.add(browseLabel);
 
 		mountPathTextField = new JTextField();
-		mountPathTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
+		mountPathTextField.setPreferredSize(new Dimension(600, 21));
+		mountPathTextField.setMaximumSize(new Dimension(600, 21));
 		mountPathTextField.setEditable(false);
 		mainPanel.add(mountPathTextField);
 
-		mainPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		mainPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		browseButton = new JButton("Browse");
 		mainPanel.add(browseButton);
 
-		mainPanel.add(Box.createRigidArea(new Dimension(30, 0)));
+		mainPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+		mainPanel.add(Box.createHorizontalGlue());
 
 		applyButton = new JButton("Apply to mount.cfg");
 		applyButton.setEnabled(false);
 		mainPanel.add(applyButton);
 
-		mainPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		mainPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 	}
 
 	@Override
