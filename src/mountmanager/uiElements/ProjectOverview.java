@@ -257,6 +257,7 @@ public class ProjectOverview extends UiElement {
 						newName = parseName(newName);
 						ui.getMountConfig().getActiveEntry().setName(newName);
 						tableModel.setValueAt(newName, index, 1);
+						ui.madeChanges(true);
 					} catch (Exception exception) {
 						ErrorHandler.warningPopup(ui.getFrame(), "Invalid project name", exception.getMessage());
 					}
