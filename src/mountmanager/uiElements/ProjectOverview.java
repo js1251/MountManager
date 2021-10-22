@@ -310,14 +310,17 @@ public class ProjectOverview extends UiElement {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
+					MountEntry toBeCopied = ui.getMountConfig().getActiveEntry();
 					MountEntry newEntry = makeNewEntry();
 					if (newEntry == null) {
 						return;
 					}
-
-					for (String folder : ui.getMountConfig().getActiveEntry().getFolders()) {
+					
+					for (String folder : toBeCopied.getFolders()) {
 						newEntry.addFolder(folder);
 					}
+					
+					ui.getMountOverview().fillMountList();
 				} catch (Exception exception) {
 					ErrorHandler.warningPopup(ui.getFrame(), "Invalid project name", exception.getMessage());
 				}
