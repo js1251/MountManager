@@ -88,7 +88,7 @@ public class MountConfig {
 			String line = br.readLine();
 
 			// identify mount.cfg tag
-			if (!line.equals(tag.trim())) {
+			if (line == null || !line.equals(tag.trim())) {
 				br.close();
 				return;
 			} else {

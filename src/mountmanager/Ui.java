@@ -86,7 +86,7 @@ public class Ui {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(true);
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-		frame.setTitle("Garry's Mod MountManager v2021.10.21");
+		frame.setTitle("Garry's Mod MountManager v2021.10.22");
 
 		// top description
 		frame.getContentPane().add(new Description(this).create());
